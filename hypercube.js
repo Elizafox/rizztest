@@ -1,10 +1,11 @@
 // hypercube.js: colour-coded 5D hypercube projection with axis gradients
 
-const raw = localStorage.getItem("rizzVector");
-const vector = raw ? JSON.parse(raw) : { V: 0, W: 0, X: 0, Y: 0, Z: 0 };
+import { loadVectorWithSource } from "./loadresult.js";
+
+const vector = loadVectorWithSource();
 
 const hypercubeSection = document.getElementById("hypercube");
-if (!raw) {
+if (!vector) {
   if (hypercubeSection) hypercubeSection.hidden = true;
   // Bail early: nothing to render
   throw new Error("No rizzVector found; hypercube hidden.");

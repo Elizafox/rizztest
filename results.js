@@ -1,5 +1,7 @@
 // results.js: scoring functions
 
+import { loadVectorWithSource, vectorAndAuraToHash } from "./loadresult.js";
+
 function clamp(n, min, max) {
   return Math.max(min, Math.min(max, n));
 }
@@ -24,21 +26,19 @@ function intensity(v) {
   return "catastrophically";
 }
 
-function auraLine(vector, meta) {
-  // Fake “derivative” aura: reward time since last check, penalise repeated checking.
-  // Keep it non-numeric in the UI.
+function auraLine(vector, isForeign) {
+  if (isForeign) {
+    return "Aura snapshot viewed. Your personal aura remains unobserved (for now).";
+  }
+
   const now = Date.now();
   const lastSeen = Number(localStorage.getItem("rizzLastSeen") || "0");
   const checks = Number(localStorage.getItem("rizzChecks") || "0");
   const minutesSince = lastSeen ? (now - lastSeen) / 60000 : 9999;
 
-  // Update observation metadata
   localStorage.setItem("rizzLastSeen", String(now));
   localStorage.setItem("rizzChecks", String(checks + 1));
 
-  // Base aura “tone” from vector shape:
-  // - big tryhard + performative tends to read as brittle
-  // - authentic + effortless tends to read as stable
   const V = vector.V || 0;
   const Y = vector.Y || 0;
   const Z = vector.Z || 0;
@@ -65,27 +65,93 @@ function alignmentText(vector) {
   return `You are: ${parts.join(", ")}.`;
 }
 
+function computeAuraScore(vector) {
+  // Totally vibes-based: map “coherent authenticity” higher, “brittle performative tryhard” lower.
+  const V = vector.V || 0;
+  const Y = vector.Y || 0;
+  const Z = vector.Z || 0;
+  const W = vector.W || 0;
+  const X = vector.X || 0;
+
+  // Start at 50, then push around
+  let score = 50;
+
+  // grounded points
+  score += -V * 0.8;
+  score += -Y * 0.8;
+
+  // controlled power / basedness nudges
+  score += W * 0.3;
+  score += X * 0.2;
+
+  // too calculated can read as "optimized"; too unhinged can also wobble
+  score -= Math.abs(Z) * 0.2;
+
+  // retake penalty (quiet)
+  const penalty = Number(localStorage.getItem("rizzRetakePenalty") || "0");
+  score -= penalty * 5;
+
+  return clamp(Math.round(score), 0, 100);
+}
+
 // main
 
-const raw = localStorage.getItem("rizzVector");
+const loaded = loadVectorWithSource();
 const missingEl = document.getElementById("missing");
 const resultEl = document.getElementById("result");
+const permalinkSection = document.getElementById("permalink");
 
-if (!raw) {
+if (!loaded) {
   missingEl.hidden = false;
+  permalinkSection.hidden = true;
 } else {
-  let vector;
-  try {
-    vector = JSON.parse(raw);
-  } catch {
-    missingEl.hidden = false;
-    throw new Error("Stored rizzVector was not valid JSON.");
-  }
+  const { vector, source, aura: auraFromLink } = loaded;
+  const isForeign = source === "hash";
 
   resultEl.hidden = false;
 
+  // If this is the user's local result, stamp a permalink that includes an aura snapshot.
+  // If it's a permalink view, DO NOT rewrite the hash (preserve what they shared).
+  if (!isForeign) {
+    const auraScore = computeAuraScore(vector);
+    const hash = vectorAndAuraToHash(vector, auraScore);
+    if (window.location.hash !== hash) history.replaceState(null, "", hash);
+  }
+
+  // Permalink UI
+  permalinkSection.hidden = false;
+
+  const input = document.getElementById("permalinkInput");
+  const copyBtn = document.getElementById("copyPermalink");
+
+  // Build permalink:
+  // - If viewing foreign permalink: share exactly what’s in the URL (don’t re-author it)
+  // - If local: build from current URL (already stamped above)
+  const url = `${location.origin}${location.pathname}${location.hash || ""}`;
+
+  if (input) input.value = url;
+
+  copyBtn?.addEventListener("click", async () => {
+    await navigator.clipboard.writeText(url);
+    copyBtn.textContent = "Copied";
+    setTimeout(() => (copyBtn.textContent = "Copy permalink"), 1200);
+  });
+
   document.getElementById("alignment").textContent = alignmentText(vector);
-  document.getElementById("aura").textContent = auraLine(vector);
+
+  // Aura display:
+  // - If foreign permalink and it included aura, show it as snapshot
+  // - Otherwise show the local aura line (and only mutate local meta for local results)
+  const auraEl = document.getElementById("aura");
+
+  if (isForeign) {
+    auraEl.textContent =
+      auraFromLink === null
+        ? "Aura not included in this snapshot."
+        : `Snapshot aura: ${clamp(Number(auraFromLink), 0, 100)} (do not attempt optimisation).`;
+  } else {
+    auraEl.textContent = auraLine(vector, false);
+  }
 
   document.getElementById("vector").textContent = JSON.stringify(
     vector,
@@ -93,13 +159,10 @@ if (!raw) {
     2,
   );
 
-  // “Retake lowers aura” mechanic (quietly)
-  const retake = document.getElementById("retake");
-  retake.addEventListener("click", () => {
+  // Retake lowers aura mechanic (only meaningful for local use)
+  document.getElementById("retake")?.addEventListener("click", () => {
     const penalty =
       Number(localStorage.getItem("rizzRetakePenalty") || "0") + 1;
     localStorage.setItem("rizzRetakePenalty", String(penalty));
-    // Can actually apply the penalty later when saving new results.
-    // Keep it quiet. Let them feel it.
   });
 }
