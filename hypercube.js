@@ -2,16 +2,18 @@
 
 import { loadVectorWithSource } from "./loadresult.js";
 
-const vector = loadVectorWithSource();
+const loaded = loadVectorWithSource();
 
 const hypercubeSection = document.getElementById("hypercube");
-if (!vector) {
+if (!loaded) {
   if (hypercubeSection) hypercubeSection.hidden = true;
   // Bail early: nothing to render
   throw new Error("No rizzVector found; hypercube hidden.");
-} else {
-  if (hypercubeSection) hypercubeSection.hidden = false;
 }
+
+if (hypercubeSection) hypercubeSection.hidden = false;
+
+const { vector, _source, aura: _auraFromLink } = loaded;
 
 const canvas = document.getElementById("cube");
 const caption = document.getElementById("caption");
