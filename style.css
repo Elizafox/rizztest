@@ -188,14 +188,23 @@ a {
     margin-top: 8px;
     font-weight: 600;
 }
-button[disabled] {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
 
 li.missing {
     outline: 2px dashed var(--border);
     border-radius: 8px;
+}
+
+.lore ul, .lore ol {
+  padding-left: 1.25rem;
+  margin: 1rem 0;
+}
+
+.lore li {
+  margin: 0.4rem 0;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
 }
 
 /* Axis colours (match hypercube.js exactly) */
