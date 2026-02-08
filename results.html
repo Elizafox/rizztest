@@ -6,6 +6,13 @@
   <title>Your Rizz Alignment</title>
   <link rel="stylesheet" href="style.css">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <script type="importmap">
+    {
+        "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.182.0/build/three.module.min.js"
+      }
+    }
+  </script>
 </head>
 <body>
   <main>
@@ -46,6 +53,7 @@
       <p id="caption" style="opacity:.8;"></p>
 
       <section id="legend" class="legend">
+        <h3>Legend</h3>
         <div class="legend-row">
           <span class="swatch v-neg"></span>
           <span class="swatch v-pos"></span>
@@ -83,6 +91,12 @@
       </section>
     </section>
 
+    <section id="hypercube3d" hidden style="max-width:900px;">
+      <h2>Rizz hypercube (3D projection)</h2>
+      <p>Drag mouse around to visualise</p>
+      <canvas id="cube3d" style="width:100%; aspect-ratio: 4 / 3; border:1px solid #ddd; border-radius:12px; display:block;"></canvas>
+    </section>
+
     <section id="permalink" hidden>
       <br />
       <hr />
@@ -95,5 +109,6 @@
 
   <script type="module" src="results.js" defer></script>
   <script type="module" src="hypercube.js" defer></script>
+  <script type="module" src="hypercube3d.js" defer></script>
 </body>
 </html>
