@@ -82,6 +82,21 @@ a {
   border: 1px solid rgba(0,0,0,0.3);
 }
 
+.progress {
+    opacity: 0.8;
+}
+
+.error {
+    margin-top: 8px;
+    font-weight: 600;
+}
+button[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+li.missing { outline: 2px dashed rgba(0,0,0,0.35); border-radius: 8px; }
+
 /* Axis colours (match hypercube.js exactly) */
 .v-neg { background: #6b4eff; }
 .v-pos { background: #ff6bb5; }
