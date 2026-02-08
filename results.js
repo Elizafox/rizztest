@@ -17,8 +17,10 @@ function signLabel(axisName, v) {
 function intensity(v) {
   const a = Math.abs(v);
   if (a <= 1) return "mildly";
-  if (a <= 3) return "notably";
-  if (a <= 6) return "dangerously";
+  if (a <= 5) return "somewhat";
+  if (a <= 10) return "notably";
+  if (a <= 20) return "very";
+  if (a <= 25) return "dangerously";
   return "catastrophically";
 }
 
