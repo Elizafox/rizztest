@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Your Rizz Alignment</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main>
+    <h1>Your Rizz Alignment</h1>
+
+    <section id="missing" hidden>
+      <p><strong>Observation failed.</strong> No stored result was found.</p>
+      <p>This usually means you refreshed reality before answering the questions.</p>
+      <p><a href="index.html">Return to the test</a></p>
+    </section>
+
+    <section id="result" hidden>
+      <p id="alignment" style="font-size: 1.25rem; margin-top: 0;"></p>
+      <p id="aura"></p>
+
+      <hr />
+  
+      <details>
+        <summary>Show vector (dangerous)</summary>
+        <pre id="vector"></pre>
+      </details>
+
+      <p style="margin-top: 18px;">
+        <a href="index.html" id="retake">Retake (aura risk)</a>
+      </p>
+    </section>
+
+    <section id="hypercube" hidden>
+      <canvas id="cube" width="900" height="600" style="border:1px solid #ddd; border-radius:12px;"></canvas>
+      <p style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap;">
+        <button id="regen">Reshuffle projection</button>
+        <button id="save">Save PNG</button>
+      </p>
+      <p id="caption" style="opacity:.8;"></p>
+
+    <section id="legend" class="legend">
+      <div class="legend-row">
+        <span class="swatch v-neg"></span>
+        <span class="swatch v-pos"></span>
+        <span class="label">V — authentic ↔ performative</span>
+      </div>
+
+      <div class="legend-row">
+        <span class="swatch w-neg"></span>
+        <span class="swatch w-pos"></span>
+        <span class="label">W — harmless ↔ powerful</span>
+      </div>
+
+      <div class="legend-row">
+        <span class="swatch x-neg"></span>
+        <span class="swatch x-pos"></span>
+        <span class="label">X — cringe ↔ based</span>
+      </div>
+
+      <div class="legend-row">
+        <span class="swatch y-neg"></span>
+        <span class="swatch y-pos"></span>
+        <span class="label">Y — effortless ↔ tryhard</span>
+      </div>
+
+      <div class="legend-row">
+        <span class="swatch z-neg"></span>
+        <span class="swatch z-pos"></span>
+        <span class="label">Z — unhinged ↔ calculated</span>
+      </div>
+
+      <p class="legend-note">
+        Edges are coloured by axis. Direction implies polarity.  
+        Your point blends the colours it leans toward.
+      </p>
+    </section>
+    </section>
+  </main>
+
+  <script type="module" src="results.js" defer></script>
+  <script type="module" src="hypercube.js" defer></script>
+</body>
+</html>
