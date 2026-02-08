@@ -285,7 +285,7 @@ if (!canvas) {
     resize();
     window.addEventListener("resize", () => resize());
 
-    // Optional: "reshuffle" button to change 5D->3D basis
+    // "Reshuffle" button to change 5D -> 3D basis
     document.getElementById("regen3d")?.addEventListener("click", () => {
       BASIS3 = randomBasis3D();
       buildWireframe();
